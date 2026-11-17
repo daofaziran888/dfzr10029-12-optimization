@@ -65,6 +65,12 @@ def export_entries(
         headers={"Content-Disposition": 'attachment; filename="data_service.csv"'})
 
 
+@router.get("/experiment-summary")
+def get_experiment_summary(version: int | None = Query(default=None)) -> dict[str, Any]:
+    """跨服务模块读取实验样本摘要；指定版本时回读同一段来源。"""
+    return service.experiment_summary(version)
+
+
 @router.get("/{entry_id}", response_model=dict)
 def get_entry(entry_id: int) -> dict:
     """读取单条数据服务明细；不存在时给出可读的错误说明。"""

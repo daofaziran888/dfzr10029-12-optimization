@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.services.experiment import experiment_service
 from app.store import store
 
 MODULE = "data_service"
@@ -14,6 +15,10 @@ NEGATIVE_ACTIONS = ["停用服务"]
 
 
 class DataServiceService:
+    def __init__(self) -> None:
+        # 数据API发布跨服务模块复用分析实验的样本摘要，保证两边口径一致。
+        self._experiment = experiment_service
+
     def list_entries(
         self,
         *,
@@ -63,3 +68,17 @@ class DataServiceService:
         entry["pending"] = target != STATUS_ORDER[-1]
         entry["abnormal"] = action in NEGATIVE_ACTIONS
         return entry, f"数据服务已{action}"
+
+    def experiment_summary(self, version: int | str | None = None) -> dict[str, Any]:
+        """跨服务模块读取实验样本摘要；按版本回读时保持同一段来源。"""
+        if version is not None and str(version).isdigit():
+            payload = self._experiment.get_version(int(version))
+            if payload is None:
+                return {"ok": False, "message": f"摘要版本 {version} 不存在", "items": []}
+            return {"ok": True, "version": payload, "items": payload.get("items", [])}
+        versions = self._experiment.list_versions()
+        main = versions.get("main")
+        if main is None:
+            return {"ok": True, "version": None, "items": []}
+        payload = self._experiment.get_version(int(main["id"])) or {}
+        return {"ok": True, "version": main, "items": payload.get("items", [])}

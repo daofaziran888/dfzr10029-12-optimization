@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Generic, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 T = TypeVar("T")
 
@@ -30,6 +30,43 @@ class EntryPayload(BaseModel):
 
 class ActionPayload(BaseModel):
     """状态动作使用独立契约，避免与登记的 values 载荷混用。"""
+
+    action: str
+    remark: str | None = None
+
+
+class ExperimentQueryPayload(BaseModel):
+    """实验样本摘要查询：筛选条件 + 分组字段 + 样本口径。
+
+    带上游返回的 snapshot 翻页时，后端直接复用同一份样本口径，
+    不会重新扫描整批实验样本。
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    values: dict[str, Any] = Field(default_factory=dict)
+    filters: dict[str, Any] = Field(default_factory=dict)
+    snapshot: str | None = None
+    version: int | None = None
+    page: int = 1
+    size: int = 20
+    sort: str | None = None
+    order: str | None = None
+
+
+class ExperimentSummaryPayload(BaseModel):
+    """实验结果接口：消费实验样本摘要并持久化，按主版本边界校验。"""
+
+    model_config = ConfigDict(extra="allow")
+
+    values: dict[str, Any] = Field(default_factory=dict)
+    base_version: int | None = None
+    snapshot: str | None = None
+    remark: str | None = None
+
+
+class ConflictResolvePayload(BaseModel):
+    """实验样本摘要冲突核对结果。"""
 
     action: str
     remark: str | None = None

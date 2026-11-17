@@ -70,3 +70,13 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .analysis-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 12px 0; }
 .analysis-bar { flex: 1; border-radius: 4px 4px 0 0; background: var(--brand); min-width: 24px; position: relative; transition: height 0.4s; }
 .analysis-bar span { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--muted); white-space: nowrap; }
+/* 分析实验：样本口径条、翻页与版本区 */
+.snapshot-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 8px 0 12px; padding: 8px 12px; background: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--muted); }
+.snapshot-bar strong { color: #1f2937; font-family: monospace; }
+.snapshot-message { color: var(--brand); }
+.data-table th.sortable { cursor: pointer; user-select: none; }
+.pager { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.pager select { padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; }
+.version-panel { margin-top: 20px; }
+.version-head { display: flex; justify-content: space-between; align-items: center; }
+.version-head h3 { font-size: 15px; margin: 0 0 8px; }
